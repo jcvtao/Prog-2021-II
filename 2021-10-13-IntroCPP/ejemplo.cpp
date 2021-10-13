@@ -1,4 +1,4 @@
-// Calcular los números pares entre 1 y 100
+// Calcular los números pares e impares entre dos límites (m, n)
 
 // Incluir la libreria iostream (incluye las 28840 lineas al compilar)
 #include <iostream>
