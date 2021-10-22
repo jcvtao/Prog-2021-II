@@ -33,11 +33,14 @@ int main(void)
     y += 0.9;
     std::cout << y << std::endl;
 
-    /*int ii = 3, jj = 0;
+    int ii = 3, jj = 0;
     jj = ++ii;
     std::cout << ii << std::endl;
-    std::cout << jj <<std::endl;*/
-
+    std::cout << jj <<std::endl;
+    ii = 3;
+    jj = ii++;
+    std::cout << ii << std::endl;
+    std::cout << jj << std::endl;
 
     return 0;
 }
