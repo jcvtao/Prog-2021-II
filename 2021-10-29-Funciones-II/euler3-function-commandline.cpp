@@ -9,7 +9,7 @@ long long sumprimedivisors(long long n);
 
 int main(int argc, char **argv)
 {
-    const long long N = std::atoll(argv[1]);
+    const long long N = std::atoll(argv[1]); // atoll = any to long long
     // std::cout << "Input: " << argv[1] << std::endl;
     // std::cout << N << std::endl;
     // const long long N = 600851475147;
