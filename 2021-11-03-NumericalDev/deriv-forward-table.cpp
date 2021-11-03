@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     std::cout.precision(15); std::cout.setf(std::ios::scientific);
     const double X = std::atof(argv[1]);
 
-    for (double h = 1.0e-1; h >= 1.0e-10; h /= 10.0)
+    for (double h = 1.0e-1; h >= 1.0e-15; h /= 10.0)
     {
         std::cout << h << "\t" << std::fabs(1 - fderiv(X, h)/std::cos(X)) << "\n";
     }
