@@ -1,5 +1,5 @@
 /*
-Implementes several integration methods
+Implements several integration methods
 */
 
 #include <cmath>
@@ -21,7 +21,7 @@ int main(int argc, char **argv)
     const double H = std::atof(argv[3]);
 
     const double exact = -std::cos(XMAX) + std::cos(XMIN);
-    for (double h = 1.0e-1; h >= 1.0e-8; h /= 10.0) {
+    for (double h = 1.0e-1; h >= 1.0e-8; h /= 2.0) {
         std::cout << h << "\t"
                   << std::fabs(1 - trapezoid(XMIN, XMAX, h, fun)/exact) << "\t"
                   << std::fabs(1 - richardson(XMIN, XMAX, h, fun, trapezoid)/exact) << "\n";
