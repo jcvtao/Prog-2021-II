@@ -1,9 +1,10 @@
 #include <iostream>
 #include <cmath>
+#include <cstdlib>
 
 double f(double x);
 template <class fptr>
-double bisection(double xl, double xu, fptr fun, double eps);
+double bisection(double xl, double xu, fptr fun, double eps, int & niter);
 
 int main(int argc, char **argv)
 {
@@ -12,8 +13,9 @@ int main(int argc, char **argv)
     const double XL = std::atof(argv[1]);
     const double XU = std::atof(argv[2]);
     const double EPS = std::atof(argv[3]);
-
-    std::cout << bisection(XL, XU, f, EPS) << std::endl;
+    int counter = 0;
+    std::cout << bisection(XL, XU, f, EPS, counter) << std::endl;
+    std::cout << counter << std::endl;
 
     return 0;
 }
@@ -24,19 +26,17 @@ double f(double x)
 }
 
 template <class fptr>
-double bisection(double xl, double xu, fptr fun, double eps)
+double bisection(double xl, double xu, fptr fun, double eps, int & niter)
 {
-    int iter = 0;
     double xr = 0;
-    for (;;)
+    int iter = 1;
+    for (;;) // while(true)
     {
         xr = (xl + xu) / 2; // Bisection
         // ¿Encontré la raíz?
-        if (std::fabs(fun(xr)) < eps)
-            break;
-        iter++;
-
+        if (std::fabs(fun(xr)) < eps) break;
         // Actualiza los límites
+        iter++;
         if (fun(xr) * fun(xl) < 0)
         {
             xu = xr;
@@ -46,6 +46,6 @@ double bisection(double xl, double xu, fptr fun, double eps)
             xl = xr;
         }
     }
-
+    niter = iter;
     return xr;
 }
