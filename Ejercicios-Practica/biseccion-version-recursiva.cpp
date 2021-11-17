@@ -16,24 +16,11 @@ int main(int argc, char **argv)
     const double XU = std::atof(argv[2]);
     const double EPS = std::atof(argv[3]);
 
-    std::cout << "bisection\t\titer\tbisection_recursivo\titer2\n";
-              //<< "-------\t\t\t---------\t\t-------------------\t-----------\n";
-
-    
-    for (double eps = EPS ; eps > 1e-6 ; eps /= 10)
-    {
-        int counter = 0;
-        int counter2 = 0;
-        std::cout << bisection(XL, XU, f, eps, counter) << "\t"
-                  << counter << "\t"
-                  << bisection_recursivo(XL, XU, f, eps, counter2) << "\t"
-                  << counter2 << "\n";
-    }
-    
-
-    //int counter = 0;
-    //std::cout << EPS << "\t" << bisection(XL, XU, f, EPS, counter) << "\t" << bisection_recursivo(XL, XU, f, EPS) << "\t";
-    //std::cout << counter << std::endl;
+    int counter = 0;
+    int counter2 = 0;
+    std::cout << "bisection\t\titer\tbisection_recursivo\titer2\n"
+              << bisection(XL, XU, f, EPS, counter) << "\t" << counter << "\t"
+              << bisection_recursivo(XL, XU, f, EPS, counter2) << "\t" << counter2 << "\n";
 
     return 0;
 }
@@ -72,11 +59,16 @@ double bisection(double xl, double xu, fptr fun, double eps, int &niter)
 template <class fptr2>
 double bisection_recursivo(double xl, double xu, fptr2 fun, double eps, int &niter)
 {
-    double xr = (xl + xu) / 2;
+    double xr = (xl + xu) / 2; // Bisección
     int iter = niter;
     iter++; // Incremento en el contador
 
-    if (std::fabs(fun(xr)) > eps) // Condición de recursividad
+    if (std::fabs(fun(xr)) < eps) // Condición de finalización
+    {
+        niter = iter;
+        return xr;
+    }
+    else // Condición de recursividad: |f(xr)| > eps
     {
         if (fun(xl) * fun(xr) < 0)
         {
@@ -87,9 +79,8 @@ double bisection_recursivo(double xl, double xu, fptr2 fun, double eps, int &nit
             xl = xr;
         }
         
-        xr = bisection_recursivo(xl, xu, fun, eps, iter);
+        xr = bisection_recursivo(xl, xu, fun, eps, iter); // Recursividad
+        niter = iter;
+        return xr;
     }
-
-    niter = iter;
-    return xr;
 }
