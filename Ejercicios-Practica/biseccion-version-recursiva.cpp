@@ -10,7 +10,7 @@ double bisection_recursivo(double xl, double xu, fptr2 fun, double eps, int &nit
 
 int main(int argc, char **argv)
 {
-    std::cout.precision(15);
+    std::cout.precision(16);
     std::cout.setf(std::ios::scientific);
     const double XL = std::atof(argv[1]);
     const double XU = std::atof(argv[2]);
