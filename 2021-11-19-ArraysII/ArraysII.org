@@ -1,0 +1,221 @@
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+# #+HTML_HEAD: <style>pre.src {background-color: #303030; color: #e5e5e5;}</style>
+#+title: Program for class arrays II + pointers
+#+author: William Oquendo
+#+email: woquendo@gmail.com
+
+* Basic arrays again
+  An array
+  - is a contigous and homogeneous block of memory
+  - can be static (size known already when compiling, limi1ted by stack size) or
+    dynamic (size known in runtime, size limited by heap size)
+  - can be initialized from the beginning : src_cpp[:exports code]{double data[N]{1};} will make
+    the first element equal to 1 and the remaining equal to 0.
+
+  *Always compile with sanitizers ~-fsanitize=address -fsanitize=undefined -fsanitize=leak~*
+
+
+  #+begin_src cpp :tangle basic_array.cpp
+    // Computing dot product
+    #include <iostream>
+
+    int main(int argc, char **argv)
+    {
+	// double x1 = 9.87, y1 = -0.65, z1 = 7.65432;
+	// double x2 = -5.432, y2 = -0.6598876, z2 = -0.64359;
+	//std::cout << x1*x2 + y1*y2 + z1*z2 << std::endl;
+
+	// memoria = stack(estatico) + heap(dinamica)
+
+	// primitive arrays //limited by stack size
+	int N = 10000;
+	double v1[N]{9.87, -0.65, 7.65432}, v2[N]{-5.432, -0.6598876, -0.64359};
+	double dot = 0;
+	for (int ii = 0; ii < N; ii++) {
+	    dot += v1[ii]*v2[ii];
+	}
+	std::cout << dot << std::endl;
+
+	return 0;
+    }
+  #+end_src
+
+  #+RESULTS:
+  : -58.1112
+
+  #+begin_export html
+  <iframe width="800" height="500" frameborder="0" src="https://pythontutor.com/iframe-embed.html#code=%23include%20%3Ciostream%3E%0A%0Aint%20main%28int%20argc,%20char%20**argv%29%0A%7B%0A%20%20%20%20//%20double%20x1%20%3D%209.87,%20y1%20%3D%20-0.65,%20z1%20%3D%207.65432%3B%0A%20%20%20%20//%20double%20x2%20%3D%20-5.432,%20y2%20%3D%20-0.6598876,%20z2%20%3D%20-0.64359%3B%0A%20%20%20%20//std%3A%3Acout%20%3C%3C%20x1*x2%20%2B%20y1*y2%20%2B%20z1*z2%20%3C%3C%20std%3A%3Aendl%3B%0A%0A%20%20%20%20//%20memoria%20%3D%20stack%28estatico%29%20%2B%20heap%28dinamica%29%0A%0A%20%20%20%20//%20primitive%20arrays%20//limited%20by%20stack%20size%0A%20%20%20%20int%20N%20%3D%2010000%3B%0A%20%20%20%20double%20v1%5BN%5D%7B9.87,%20-0.65,%207.65432%7D,%20v2%5BN%5D%7B-5.432,%20-0.6598876,%20-0.64359%7D%3B%0A%20%20%20%20double%20dot%20%3D%200%3B%0A%20%20%20%20for%20%28int%20ii%20%3D%200%3B%20ii%20%3C%20N%3B%20ii%2B%2B%29%20%7B%0A%20%20%20%20%20%20%20%20dot%20%2B%3D%20v1%5Bii%5D*v2%5Bii%5D%3B%0A%20%20%20%20%7D%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20dot%20%3C%3C%20std%3A%3Aendl%3B%0A%0A%20%20%20%20return%200%3B%0A%7D&codeDivHeight=400&codeDivWidth=350&curInstr=0&origin=opt-frontend.js&py=cpp_g%2B%2B9.3.0&rawInputLstJSON=%5B%5D"> </iframe>
+  #+end_export
+
+* Pointers basic [1/1]
+  Goal: to learn what a pointer is (a variable that stores a memory address) and
+  its relationship with primitive arrays
+
+  #+begin_src cpp :tangle basic_pointer.cpp
+  #include <iostream>
+
+  int main(int argc, char **argv) {
+      double val = 0.987766;
+      double * ptr = nullptr; // pointer. Only stores memory addresses
+      ptr = &val; // ptr stores x memory address
+      //ptr = val; // error, cannot store common values
+      std::cout << "val  : " << val  << std::endl;
+      std::cout << "&val : " << &val << std::endl;
+      std::cout << "ptr  : " << ptr  << std::endl; // prints val address
+      std::cout << "*ptr : " << *ptr << std::endl; // prints val VALUE
+      std::cout << "&ptr : " << &ptr << std::endl; // prints ptr address
+      std::cout << "*(ptr+0) : " << *(ptr+0) << std::endl; // value pointed by ptr
+      std::cout << "*(ptr+1) : " << *(ptr+1) << std::endl; // value one jump later
+      std::cout << "ptr[0] : " << ptr[0] << std::endl; //
+
+      return 0;
+  }
+  #+end_src
+
+  #+RESULTS:
+  | val      | : |       0.987766 |
+  | &val     | : | 0x7fff312e47a8 |
+  | ptr      | : | 0x7fff312e47a8 |
+  | *ptr     | : |       0.987766 |
+  | &ptr     | : | 0x7fff312e47a0 |
+  | *(ptr+0) | : |       0.987766 |
+  | *(ptr+1) | : |              0 |
+  | ptr[0]   | : |       0.987766 |
+
+  | A0 | A1 | A2 | A3 | B0 | B1 | B2 | B3 |
+  ptr + 0 -> inicio de Arreglo A0
+  ptr + 1 -> A1 o B0 -> B0
+
+
+  #+RESULTS:
+  | val      | : |       0.987766 |
+  | &val     | : | 0x7ffcf6b610b8 |
+  | ptr      | : | 0x7ffcf6b610b8 |
+  | *ptr     | : |       0.987766 |
+  | &ptr     | : | 0x7ffcf6b610b0 |
+  | *(ptr+0) | : |       0.987766 |
+  | *(ptr+1) | : |              0 |
+  | ptr[0]   | : |       0.987766 |
+
+
+  C++/Python tutor visualization
+  #+begin_export html
+  <iframe width="800" height="500" frameborder="0" src="https://pythontutor.com/iframe-embed.html#code=%23include%20%3Ciostream%3E%0A%0Aint%20main%28int%20argc,%20char%20*argv%5B%5D%29%20%7B%0A%20%20%20%20double%20val%20%3D%200.987766%3B%0A%20%20%20%20double%20*%20ptr%20%3D%20nullptr%3B%20//%20pointer.%20Only%20stores%20memory%20addresses%0A%20%20%20%20ptr%20%3D%20%26val%3B%20//%20ptr%20stores%20x%20memory%20address%0A%20%20%20%20//ptr%20%3D%20x%3B%20//%20error,%20cannot%20store%20common%20values%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20%22val%20%3A%20%22%20%3C%3C%20val%20%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20%22%26val%3A%20%22%20%3C%3C%20%26val%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20%22ptr%20%3A%20%22%20%3C%3C%20ptr%20%20%3C%3C%20std%3A%3Aendl%3B%20//%20prints%20val%20address%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20%22*ptr%3A%20%22%20%3C%3C%20*ptr%20%3C%3C%20std%3A%3Aendl%3B%20//%20prints%20val%20VALUE%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20%22%26ptr%3A%20%22%20%3C%3C%20%26ptr%20%3C%3C%20std%3A%3Aendl%3B%20//%20prints%20ptr%20address%0A%20%20%20%20%0A%20%20%20%20return%200%3B%0A%7D%0A&codeDivHeight=400&codeDivWidth=350&curInstr=0&origin=opt-frontend.js&py=cpp_g%2B%2B9.3.0&rawInputLstJSON=%5B%5D"> </iframe>
+  #+end_export
+
+  - [X] Modify the previous code to include a pointer
+    #+begin_src cpp :tangle basic_array_pointer.cpp
+// Computing dot product
+#include <iostream>
+
+int main(int argc, char **argv)
+{
+	// double x1 = 9.87, y1 = -0.65, z1 = 7.65432;
+	// double x2 = -5.432, y2 = -0.6598876, z2 = -0.64359;
+	//std::cout << x1*x2 + y1*y2 + z1*z2 << std::endl;
+
+	// memoria = stack(estatico) + heap(dinamica)
+
+	// primitive arrays //limited by stack size
+	int N = 10000;
+	double v1[N]{9.87, -0.65, 7.65432};
+	double * ptr = nullptr;
+	ptr = &v1[0];
+	std::cout << v1[0] << std::endl;  // 9.87
+	std::cout << &v1[0] << std::endl; // 0xAFBDF... direccion de memoria del primer elemento, inicio del arreglo
+	std::cout << &v1[1] << std::endl; // dir memoria segundo elemento -> 0xAFBDF... + 8 byte
+	std::cout << ptr << std::endl;    // 0xAFBDF...
+	std::cout << ptr[0] << std::endl; // 9.87
+	std::cout << ptr[1] << std::endl; // -0.65
+	std::cout << *(ptr + 2) << std::endl; // 7.65432
+	std::cout << v1 << std::endl; // 0xAFBDF...
+	std::cout << *(v1 + 2) << std::endl; // 7.65432
+
+	return 0;
+}
+    #+end_src
+
+    #+RESULTS:
+    |           9.87 |
+    | 0x7fff5f365e00 |
+    | 0x7fff5f365e08 |
+    | 0x7fff5f365e00 |
+    |           9.87 |
+    |          -0.65 |
+    |        7.65432 |
+    | 0x7fff5f365e00 |
+    |        7.65432 |
+
+Como se puede ver, el nombre de un arreglo *es un puntero constante* que apunta
+al inicio del bloque de memoria.
+
+Tambien, la notacion ~[]~ indica acceder a un valor.
+
+  Python/c++ tutor visualization
+  #+begin_export html
+  <iframe width="800" height="500" frameborder="0" src="https://pythontutor.com/iframe-embed.html#code=//%20Computing%20dot%20product%0A%20%20%23include%20%3Ciostream%3E%0A%0A%20%20int%20main%28int%20argc,%20char%20**argv%29%0A%20%20%7B%0A%20%20%20%20%20%20//%20double%20x1%20%3D%209.87,%20y1%20%3D%20-0.65,%20z1%20%3D%207.65432%3B%0A%20%20%20%20%20%20//%20double%20x2%20%3D%20-5.432,%20y2%20%3D%20-0.6598876,%20z2%20%3D%20-0.64359%3B%0A%20%20%20%20%20%20//std%3A%3Acout%20%3C%3C%20x1*x2%20%2B%20y1*y2%20%2B%20z1*z2%20%3C%3C%20std%3A%3Aendl%3B%0A%0A%20%20%20%20%20%20//%20memoria%20%3D%20stack%28estatico%29%20%2B%20heap%28dinamica%29%0A%0A%20%20%20%20%20%20//%20primitive%20arrays%20//limited%20by%20stack%20size%0A%20%20%20%20%20%20int%20N%20%3D%2010000%3B%0A%20%20%20%20%20%20double%20v1%5BN%5D%7B9.87,%20-0.65,%207.65432%7D%3B%0A%20%20%20%20%20%20double%20*%20ptr%20%3D%20nullptr%3B%0A%20%20%20%20%20%20ptr%20%3D%20%26v1%5B0%5D%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20v1%5B0%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20%26v1%5B0%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20%26v1%5B1%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20ptr%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20ptr%5B0%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20ptr%5B1%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20*%28ptr%20%2B%202%29%20%3C%3C%20std%3A%3Aendl%3B%0A%0A%20%20%20%20%20%20return%200%3B%0A%20%20%7D&codeDivHeight=400&codeDivWidth=350&curInstr=0&origin=opt-frontend.js&py=cpp_g%2B%2B9.3.0&rawInputLstJSON=%5B%5D"> </iframe>
+  #+end_export
+
+* Passing arrays to functions [3/3]
+Goal: create functions and pass arrays by reference.
+- [X] Let's create a function that receives our vectors and returns their dot
+  product.
+- [X] Also create a function to initialize the vectors
+- [X] Create a function  print them.
+
+#+begin_src cpp :tangle basic_array_functions.cpp
+// Computing dot product
+#include <iostream>
+
+double dotproduct(const double a1[], const double a2[], int size); // by reference by default
+void init(double a1[], double a2[], int size); // by reference by default
+void print(const double array[], int size);
+
+int main(int argc, char **argv)
+{
+    // double x1 = 9.87, y1 = -0.65, z1 = 7.65432;
+    // double x2 = -5.432, y2 = -0.6598876, z2 = -0.64359;
+    //std::cout << x1*x2 + y1*y2 + z1*z2 << std::endl;
+
+    // memoria = stack(estatico) + heap(dinamica)
+
+    // primitive arrays //limited by stack size
+    int N = 10000;
+    double v1[N]{9.87, -0.65, 7.65432}, v2[N]{-5.432, -0.6598876, -0.64359};
+    init(v1, v2, N);
+    std::cout << dotproduct(v1, v2, N) << std::endl;
+    print(v1, 10);
+    print(v2, 11);
+
+    return 0;
+}
+
+double dotproduct(const double a1[], const double a2[], int size)
+{
+    double dot = 0;
+    for (int ii = 0; ii < size; ii++) {
+        dot += a1[ii]*a2[ii];
+    }
+    return dot;
+}
+void init(double a1[], double a2[], int size)
+{
+    for (int ii = 0; ii < size; ii++) {
+        a1[ii] = 2*ii;
+        a2[ii] = 1.0/(2*ii*ii + 1);
+    }
+}
+
+void print(const double array[], int size)
+{
+    for (int ii = 0; ii < size; ii++) {
+        std::cout << array[ii] << " " ;
+    }
+    std::cout << "\n";
+}
+
+#+end_src
+
+#+RESULTS:
+: 9.36144
+

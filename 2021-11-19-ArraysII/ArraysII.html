@@ -1,0 +1,592 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2021-11-19 Fri 09:00 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Program for class arrays II + pointers</title>
+<meta name="author" content="William Oquendo" />
+<meta name="generator" content="Org Mode" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: auto;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline; margin-top: 14px;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/htmlize.css"/>
+<link rel="stylesheet" type="text/css" href="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/css/readtheorg.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/lib/js/jquery.stickytableheaders.min.js"></script>
+<script type="text/javascript" src="https://fniessen.github.io/org-html-themes/src/readtheorg_theme/js/readtheorg.js"></script>
+<script type="text/javascript">
+// @license magnet:?xt=urn:btih:e95b018ef3580986a04669f1b5879592219e2a7a&dn=public-domain.txt Public Domain
+<!--/*--><![CDATA[/*><!--*/
+     function CodeHighlightOn(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.add("code-highlighted");
+         target.classList.add("code-highlighted");
+       }
+     }
+     function CodeHighlightOff(elem, id)
+     {
+       var target = document.getElementById(id);
+       if(null != target) {
+         elem.classList.remove("code-highlighted");
+         target.classList.remove("code-highlighted");
+       }
+     }
+    /*]]>*///-->
+// @license-end
+</script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">Program for class arrays II + pointers</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgacd31f5">1. Basic arrays again</a></li>
+<li><a href="#org55f1b63">2. Pointers basic <code>[1/1]</code></a></li>
+<li><a href="#org5b21b64">3. Passing arrays to functions <code>[3/3]</code></a></li>
+<li><a href="#org5cb01d0">4. <span class="todo TODO">TODO</span> Talk about dynamic memory <code>[/]</code></a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgacd31f5" class="outline-2">
+<h2 id="orgacd31f5"><span class="section-number-2">1</span> Basic arrays again</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+An array
+</p>
+<ul class="org-ul">
+<li>is a contigous and homogeneous block of memory</li>
+<li>can be static (size known already when compiling, limi1ted by stack size) or
+dynamic (size known in runtime, size limited by heap size)</li>
+<li>can be initialized from the beginning : <code class="src src-cpp"><span style="color: #005a5f;">double</span> <span style="color: #00538b;">data</span><span style="color: #000000;">[</span>N<span style="color: #000000;">]{</span><span style="color: #0000c0;">1</span><span style="color: #000000;">}</span>;</code> will make
+the first element equal to 1 and the remaining equal to 0.</li>
+</ul>
+
+<p>
+<b>Always compile with sanitizers <code>-fsanitize=address -fsanitize=undefined -fsanitize=leak</code></b>
+</p>
+
+
+<div class="org-src-container">
+<pre class="src src-cpp">    <span style="color: #505050;">// </span><span style="color: #505050;">Computing dot product</span>
+<span style="color: #a0132f;">    #include</span> <span style="color: #000000;">&lt;</span><span style="color: #2544bb;">iostream</span><span style="color: #000000;">&gt;</span>
+
+    <span style="color: #005a5f;">int</span> <span style="color: #721045;">main</span><span style="color: #000000;">(</span><span style="color: #005a5f;">int</span> <span style="color: #00538b;">argc</span>, <span style="color: #005a5f;">char</span> **<span style="color: #00538b;">argv</span><span style="color: #000000;">)</span>
+    <span style="color: #000000;">{</span>
+    <span style="color: #505050;">// </span><span style="color: #505050;">double x1 = 9.87, y1 = -0.65, z1 = 7.65432;</span>
+    <span style="color: #505050;">// </span><span style="color: #505050;">double x2 = -5.432, y2 = -0.6598876, z2 = -0.64359;</span>
+    <span style="color: #505050;">//</span><span style="color: #505050;">std::cout &lt;&lt; x1*x2 + y1*y2 + z1*z2 &lt;&lt; std::endl;</span>
+
+    <span style="color: #505050;">// </span><span style="color: #505050;">memoria = stack(estatico) + heap(dinamica)</span>
+
+    <span style="color: #505050;">// </span><span style="color: #505050;">primitive arrays //limited by stack size</span>
+    <span style="color: #005a5f;">int</span> <span style="color: #00538b;">N</span> = <span style="color: #0000c0;">10000</span>;
+    <span style="color: #005a5f;">double</span> <span style="color: #00538b;">v1</span><span style="color: #a8007f;">[</span>N<span style="color: #a8007f;">]{</span><span style="color: #0000c0;">9.87</span>, -<span style="color: #0000c0;">0.65</span>, <span style="color: #0000c0;">7.65432</span><span style="color: #a8007f;">}</span>, <span style="color: #00538b;">v2</span><span style="color: #a8007f;">[</span>N<span style="color: #a8007f;">]{</span>-<span style="color: #0000c0;">5.432</span>, -<span style="color: #0000c0;">0.6598876</span>, -<span style="color: #0000c0;">0.64359</span><span style="color: #a8007f;">}</span>;
+    <span style="color: #005a5f;">double</span> <span style="color: #00538b;">dot</span> = <span style="color: #0000c0;">0</span>;
+    <span style="color: #5317ac;">for</span> <span style="color: #a8007f;">(</span><span style="color: #005a5f;">int</span> <span style="color: #00538b;">ii</span> = <span style="color: #0000c0;">0</span>; ii &lt; N; ii++<span style="color: #a8007f;">)</span> <span style="color: #a8007f;">{</span>
+        dot += v1<span style="color: #005f88;">[</span>ii<span style="color: #005f88;">]</span>*v2<span style="color: #005f88;">[</span>ii<span style="color: #005f88;">]</span>;
+    <span style="color: #a8007f;">}</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; dot &lt;&lt; <span style="color: #0000c0;">std</span>::endl;
+
+    <span style="color: #5317ac;">return</span> <span style="color: #0000c0;">0</span>;
+    <span style="color: #000000;">}</span>
+</pre>
+</div>
+
+<iframe width="800" height="500" frameborder="0" src="https://pythontutor.com/iframe-embed.html#code=%23include%20%3Ciostream%3E%0A%0Aint%20main%28int%20argc,%20char%20**argv%29%0A%7B%0A%20%20%20%20//%20double%20x1%20%3D%209.87,%20y1%20%3D%20-0.65,%20z1%20%3D%207.65432%3B%0A%20%20%20%20//%20double%20x2%20%3D%20-5.432,%20y2%20%3D%20-0.6598876,%20z2%20%3D%20-0.64359%3B%0A%20%20%20%20//std%3A%3Acout%20%3C%3C%20x1*x2%20%2B%20y1*y2%20%2B%20z1*z2%20%3C%3C%20std%3A%3Aendl%3B%0A%0A%20%20%20%20//%20memoria%20%3D%20stack%28estatico%29%20%2B%20heap%28dinamica%29%0A%0A%20%20%20%20//%20primitive%20arrays%20//limited%20by%20stack%20size%0A%20%20%20%20int%20N%20%3D%2010000%3B%0A%20%20%20%20double%20v1%5BN%5D%7B9.87,%20-0.65,%207.65432%7D,%20v2%5BN%5D%7B-5.432,%20-0.6598876,%20-0.64359%7D%3B%0A%20%20%20%20double%20dot%20%3D%200%3B%0A%20%20%20%20for%20%28int%20ii%20%3D%200%3B%20ii%20%3C%20N%3B%20ii%2B%2B%29%20%7B%0A%20%20%20%20%20%20%20%20dot%20%2B%3D%20v1%5Bii%5D*v2%5Bii%5D%3B%0A%20%20%20%20%7D%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20dot%20%3C%3C%20std%3A%3Aendl%3B%0A%0A%20%20%20%20return%200%3B%0A%7D&codeDivHeight=400&codeDivWidth=350&curInstr=0&origin=opt-frontend.js&py=cpp_g%2B%2B9.3.0&rawInputLstJSON=%5B%5D"> </iframe>
+</div>
+</div>
+
+<div id="outline-container-org55f1b63" class="outline-2">
+<h2 id="org55f1b63"><span class="section-number-2">2</span> Pointers basic <code>[1/1]</code></h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Goal: to learn what a pointer is (a variable that stores a memory address) and
+its relationship with primitive arrays
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #a0132f;">  #include</span> <span style="color: #000000;">&lt;</span><span style="color: #2544bb;">iostream</span><span style="color: #000000;">&gt;</span>
+
+  <span style="color: #005a5f;">int</span> <span style="color: #721045;">main</span><span style="color: #000000;">(</span><span style="color: #005a5f;">int</span> <span style="color: #00538b;">argc</span>, <span style="color: #005a5f;">char</span> **<span style="color: #00538b;">argv</span><span style="color: #000000;">)</span> <span style="color: #000000;">{</span>
+      <span style="color: #005a5f;">double</span> <span style="color: #00538b;">val</span> = <span style="color: #0000c0;">0.987766</span>;
+      <span style="color: #005a5f;">double</span> * <span style="color: #00538b;">ptr</span> = <span style="color: #0000c0;">nullptr</span>; <span style="color: #505050;">// </span><span style="color: #505050;">pointer. Only stores memory addresses</span>
+      ptr = &amp;val; <span style="color: #505050;">// </span><span style="color: #505050;">ptr stores x memory address</span>
+      <span style="color: #505050;">//</span><span style="color: #505050;">ptr = val; // error, cannot store common values</span>
+      <span style="color: #0000c0;">std</span>::cout &lt;&lt; <span style="color: #2544bb;">"val  : "</span> &lt;&lt; val  &lt;&lt; <span style="color: #0000c0;">std</span>::endl;
+      <span style="color: #0000c0;">std</span>::cout &lt;&lt; <span style="color: #2544bb;">"&amp;val : "</span> &lt;&lt; &amp;val &lt;&lt; <span style="color: #0000c0;">std</span>::endl;
+      <span style="color: #0000c0;">std</span>::cout &lt;&lt; <span style="color: #2544bb;">"ptr  : "</span> &lt;&lt; ptr  &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">prints val address</span>
+      <span style="color: #0000c0;">std</span>::cout &lt;&lt; <span style="color: #2544bb;">"*ptr : "</span> &lt;&lt; *ptr &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">prints val VALUE</span>
+      <span style="color: #0000c0;">std</span>::cout &lt;&lt; <span style="color: #2544bb;">"&amp;ptr : "</span> &lt;&lt; &amp;ptr &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">prints ptr address</span>
+      <span style="color: #0000c0;">std</span>::cout &lt;&lt; <span style="color: #2544bb;">"*(ptr+0) : "</span> &lt;&lt; *<span style="color: #a8007f;">(</span>ptr+<span style="color: #0000c0;">0</span><span style="color: #a8007f;">)</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">value pointed by ptr</span>
+      <span style="color: #0000c0;">std</span>::cout &lt;&lt; <span style="color: #2544bb;">"*(ptr+1) : "</span> &lt;&lt; *<span style="color: #a8007f;">(</span>ptr+<span style="color: #0000c0;">1</span><span style="color: #a8007f;">)</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">value one jump later</span>
+      <span style="color: #0000c0;">std</span>::cout &lt;&lt; <span style="color: #2544bb;">"ptr[0] : "</span> &lt;&lt; ptr<span style="color: #a8007f;">[</span><span style="color: #0000c0;">0</span><span style="color: #a8007f;">]</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">//</span>
+
+      <span style="color: #5317ac;">return</span> <span style="color: #0000c0;">0</span>;
+  <span style="color: #000000;">}</span>
+</pre>
+</div>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">A0</td>
+<td class="org-left">A1</td>
+<td class="org-left">A2</td>
+<td class="org-left">A3</td>
+<td class="org-left">B0</td>
+<td class="org-left">B1</td>
+<td class="org-left">B2</td>
+<td class="org-left">B3</td>
+</tr>
+</tbody>
+</table>
+<p>
+ptr + 0 -&gt; inicio de Arreglo A0
+ptr + 1 -&gt; A1 o B0 -&gt; B0
+</p>
+
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-right" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">val</td>
+<td class="org-left">:</td>
+<td class="org-right">0.987766</td>
+</tr>
+
+<tr>
+<td class="org-left">&amp;val</td>
+<td class="org-left">:</td>
+<td class="org-right">0x7ffcf6b610b8</td>
+</tr>
+
+<tr>
+<td class="org-left">ptr</td>
+<td class="org-left">:</td>
+<td class="org-right">0x7ffcf6b610b8</td>
+</tr>
+
+<tr>
+<td class="org-left">*ptr</td>
+<td class="org-left">:</td>
+<td class="org-right">0.987766</td>
+</tr>
+
+<tr>
+<td class="org-left">&amp;ptr</td>
+<td class="org-left">:</td>
+<td class="org-right">0x7ffcf6b610b0</td>
+</tr>
+
+<tr>
+<td class="org-left">*(ptr+0)</td>
+<td class="org-left">:</td>
+<td class="org-right">0.987766</td>
+</tr>
+
+<tr>
+<td class="org-left">*(ptr+1)</td>
+<td class="org-left">:</td>
+<td class="org-right">0</td>
+</tr>
+
+<tr>
+<td class="org-left">ptr[0]</td>
+<td class="org-left">:</td>
+<td class="org-right">0.987766</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>
+C++/Python tutor visualization
+</p>
+<iframe width="800" height="500" frameborder="0" src="https://pythontutor.com/iframe-embed.html#code=%23include%20%3Ciostream%3E%0A%0Aint%20main%28int%20argc,%20char%20*argv%5B%5D%29%20%7B%0A%20%20%20%20double%20val%20%3D%200.987766%3B%0A%20%20%20%20double%20*%20ptr%20%3D%20nullptr%3B%20//%20pointer.%20Only%20stores%20memory%20addresses%0A%20%20%20%20ptr%20%3D%20%26val%3B%20//%20ptr%20stores%20x%20memory%20address%0A%20%20%20%20//ptr%20%3D%20x%3B%20//%20error,%20cannot%20store%20common%20values%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20%22val%20%3A%20%22%20%3C%3C%20val%20%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20%22%26val%3A%20%22%20%3C%3C%20%26val%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20%22ptr%20%3A%20%22%20%3C%3C%20ptr%20%20%3C%3C%20std%3A%3Aendl%3B%20//%20prints%20val%20address%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20%22*ptr%3A%20%22%20%3C%3C%20*ptr%20%3C%3C%20std%3A%3Aendl%3B%20//%20prints%20val%20VALUE%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20%22%26ptr%3A%20%22%20%3C%3C%20%26ptr%20%3C%3C%20std%3A%3Aendl%3B%20//%20prints%20ptr%20address%0A%20%20%20%20%0A%20%20%20%20return%200%3B%0A%7D%0A&codeDivHeight=400&codeDivWidth=350&curInstr=0&origin=opt-frontend.js&py=cpp_g%2B%2B9.3.0&rawInputLstJSON=%5B%5D"> </iframe>
+
+<ul class="org-ul">
+<li class="on"><code>[X]</code> <p>
+Modify the previous code to include a pointer
+</p>
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #505050;">// </span><span style="color: #505050;">Computing dot product</span>
+<span style="color: #a0132f;">#include</span> <span style="color: #000000;">&lt;</span><span style="color: #2544bb;">iostream</span><span style="color: #000000;">&gt;</span>
+
+<span style="color: #005a5f;">int</span> <span style="color: #721045;">main</span><span style="color: #000000;">(</span><span style="color: #005a5f;">int</span> <span style="color: #00538b;">argc</span>, <span style="color: #005a5f;">char</span> **<span style="color: #00538b;">argv</span><span style="color: #000000;">)</span>
+<span style="color: #000000;">{</span>
+    <span style="color: #505050;">// </span><span style="color: #505050;">double x1 = 9.87, y1 = -0.65, z1 = 7.65432;</span>
+    <span style="color: #505050;">// </span><span style="color: #505050;">double x2 = -5.432, y2 = -0.6598876, z2 = -0.64359;</span>
+    <span style="color: #505050;">//</span><span style="color: #505050;">std::cout &lt;&lt; x1*x2 + y1*y2 + z1*z2 &lt;&lt; std::endl;</span>
+
+    <span style="color: #505050;">// </span><span style="color: #505050;">memoria = stack(estatico) + heap(dinamica)</span>
+
+    <span style="color: #505050;">// </span><span style="color: #505050;">primitive arrays //limited by stack size</span>
+    <span style="color: #005a5f;">int</span> <span style="color: #00538b;">N</span> = <span style="color: #0000c0;">10000</span>;
+    <span style="color: #005a5f;">double</span> <span style="color: #00538b;">v1</span><span style="color: #a8007f;">[</span>N<span style="color: #a8007f;">]{</span><span style="color: #0000c0;">9.87</span>, -<span style="color: #0000c0;">0.65</span>, <span style="color: #0000c0;">7.65432</span><span style="color: #a8007f;">}</span>;
+    <span style="color: #005a5f;">double</span> * <span style="color: #00538b;">ptr</span> = <span style="color: #0000c0;">nullptr</span>;
+    ptr = &amp;v1<span style="color: #a8007f;">[</span><span style="color: #0000c0;">0</span><span style="color: #a8007f;">]</span>;
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; v1<span style="color: #a8007f;">[</span><span style="color: #0000c0;">0</span><span style="color: #a8007f;">]</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl;  <span style="color: #505050;">// </span><span style="color: #505050;">9.87</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; &amp;v1<span style="color: #a8007f;">[</span><span style="color: #0000c0;">0</span><span style="color: #a8007f;">]</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">0xAFBDF... direccion de memoria del primer elemento, inicio del arreglo</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; &amp;v1<span style="color: #a8007f;">[</span><span style="color: #0000c0;">1</span><span style="color: #a8007f;">]</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">dir memoria segundo elemento -&gt; 0xAFBDF... + 8 byte</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; ptr &lt;&lt; <span style="color: #0000c0;">std</span>::endl;    <span style="color: #505050;">// </span><span style="color: #505050;">0xAFBDF...</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; ptr<span style="color: #a8007f;">[</span><span style="color: #0000c0;">0</span><span style="color: #a8007f;">]</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">9.87</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; ptr<span style="color: #a8007f;">[</span><span style="color: #0000c0;">1</span><span style="color: #a8007f;">]</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">-0.65</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; *<span style="color: #a8007f;">(</span>ptr + <span style="color: #0000c0;">2</span><span style="color: #a8007f;">)</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">7.65432</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; v1 &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">0xAFBDF...</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; *<span style="color: #a8007f;">(</span>v1 + <span style="color: #0000c0;">2</span><span style="color: #a8007f;">)</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl; <span style="color: #505050;">// </span><span style="color: #505050;">7.65432</span>
+
+    <span style="color: #5317ac;">return</span> <span style="color: #0000c0;">0</span>;
+<span style="color: #000000;">}</span>
+</pre>
+</div></li>
+</ul>
+
+<p>
+Como se puede ver, el nombre de un arreglo <b>es un puntero constante</b> que apunta
+al inicio del bloque de memoria.
+</p>
+
+<p>
+Tambien, la notacion <code>[]</code> indica acceder a un valor.
+</p>
+
+<p>
+Python/c++ tutor visualization
+</p>
+<iframe width="800" height="500" frameborder="0" src="https://pythontutor.com/iframe-embed.html#code=//%20Computing%20dot%20product%0A%20%20%23include%20%3Ciostream%3E%0A%0A%20%20int%20main%28int%20argc,%20char%20**argv%29%0A%20%20%7B%0A%20%20%20%20%20%20//%20double%20x1%20%3D%209.87,%20y1%20%3D%20-0.65,%20z1%20%3D%207.65432%3B%0A%20%20%20%20%20%20//%20double%20x2%20%3D%20-5.432,%20y2%20%3D%20-0.6598876,%20z2%20%3D%20-0.64359%3B%0A%20%20%20%20%20%20//std%3A%3Acout%20%3C%3C%20x1*x2%20%2B%20y1*y2%20%2B%20z1*z2%20%3C%3C%20std%3A%3Aendl%3B%0A%0A%20%20%20%20%20%20//%20memoria%20%3D%20stack%28estatico%29%20%2B%20heap%28dinamica%29%0A%0A%20%20%20%20%20%20//%20primitive%20arrays%20//limited%20by%20stack%20size%0A%20%20%20%20%20%20int%20N%20%3D%2010000%3B%0A%20%20%20%20%20%20double%20v1%5BN%5D%7B9.87,%20-0.65,%207.65432%7D%3B%0A%20%20%20%20%20%20double%20*%20ptr%20%3D%20nullptr%3B%0A%20%20%20%20%20%20ptr%20%3D%20%26v1%5B0%5D%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20v1%5B0%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20%26v1%5B0%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20%26v1%5B1%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20ptr%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20ptr%5B0%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20ptr%5B1%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%20%20std%3A%3Acout%20%3C%3C%20*%28ptr%20%2B%202%29%20%3C%3C%20std%3A%3Aendl%3B%0A%0A%20%20%20%20%20%20return%200%3B%0A%20%20%7D&codeDivHeight=400&codeDivWidth=350&curInstr=0&origin=opt-frontend.js&py=cpp_g%2B%2B9.3.0&rawInputLstJSON=%5B%5D"> </iframe>
+</div>
+</div>
+
+<div id="outline-container-org5b21b64" class="outline-2">
+<h2 id="org5b21b64"><span class="section-number-2">3</span> Passing arrays to functions <code>[3/3]</code></h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Goal: create functions and pass arrays by reference.
+</p>
+<ul class="org-ul">
+<li class="on"><code>[X]</code> Let&rsquo;s create a function that receives our vectors and returns their dot
+product.</li>
+<li class="on"><code>[X]</code> Also create a function to initialize the vectors</li>
+<li class="on"><code>[X]</code> Create a function  print them.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #505050;">// </span><span style="color: #505050;">Computing dot product</span>
+<span style="color: #a0132f;">#include</span> <span style="color: #000000;">&lt;</span><span style="color: #2544bb;">iostream</span><span style="color: #000000;">&gt;</span>
+
+<span style="color: #005a5f;">double</span> <span style="color: #721045;">dotproduct</span><span style="color: #000000;">(</span><span style="color: #5317ac;">const</span> <span style="color: #005a5f;">double</span> <span style="color: #00538b;">a1</span><span style="color: #a8007f;">[]</span>, <span style="color: #5317ac;">const</span> <span style="color: #005a5f;">double</span> <span style="color: #00538b;">a2</span><span style="color: #a8007f;">[]</span>, <span style="color: #005a5f;">int</span> <span style="color: #00538b;">size</span><span style="color: #000000;">)</span>; <span style="color: #505050;">// </span><span style="color: #505050;">by reference by default</span>
+<span style="color: #005a5f;">void</span> <span style="color: #721045;">init</span><span style="color: #000000;">(</span><span style="color: #005a5f;">double</span> <span style="color: #00538b;">a1</span><span style="color: #a8007f;">[]</span>, <span style="color: #005a5f;">double</span> <span style="color: #00538b;">a2</span><span style="color: #a8007f;">[]</span>, <span style="color: #005a5f;">int</span> <span style="color: #00538b;">size</span><span style="color: #000000;">)</span>; <span style="color: #505050;">// </span><span style="color: #505050;">by reference by default</span>
+<span style="color: #005a5f;">void</span> <span style="color: #721045;">print</span><span style="color: #000000;">(</span><span style="color: #5317ac;">const</span> <span style="color: #005a5f;">double</span> <span style="color: #00538b;">array</span><span style="color: #a8007f;">[]</span>, <span style="color: #005a5f;">int</span> <span style="color: #00538b;">size</span><span style="color: #000000;">)</span>;
+
+<span style="color: #005a5f;">int</span> <span style="color: #721045;">main</span><span style="color: #000000;">(</span><span style="color: #005a5f;">int</span> <span style="color: #00538b;">argc</span>, <span style="color: #005a5f;">char</span> **<span style="color: #00538b;">argv</span><span style="color: #000000;">)</span>
+<span style="color: #000000;">{</span>
+    <span style="color: #505050;">// </span><span style="color: #505050;">double x1 = 9.87, y1 = -0.65, z1 = 7.65432;</span>
+    <span style="color: #505050;">// </span><span style="color: #505050;">double x2 = -5.432, y2 = -0.6598876, z2 = -0.64359;</span>
+    <span style="color: #505050;">//</span><span style="color: #505050;">std::cout &lt;&lt; x1*x2 + y1*y2 + z1*z2 &lt;&lt; std::endl;</span>
+
+    <span style="color: #505050;">// </span><span style="color: #505050;">memoria = stack(estatico) + heap(dinamica)</span>
+
+    <span style="color: #505050;">// </span><span style="color: #505050;">primitive arrays //limited by stack size</span>
+    <span style="color: #005a5f;">int</span> <span style="color: #00538b;">N</span> = <span style="color: #0000c0;">10000</span>;
+    <span style="color: #005a5f;">double</span> <span style="color: #00538b;">v1</span><span style="color: #a8007f;">[</span>N<span style="color: #a8007f;">]{</span><span style="color: #0000c0;">9.87</span>, -<span style="color: #0000c0;">0.65</span>, <span style="color: #0000c0;">7.65432</span><span style="color: #a8007f;">}</span>, <span style="color: #00538b;">v2</span><span style="color: #a8007f;">[</span>N<span style="color: #a8007f;">]{</span>-<span style="color: #0000c0;">5.432</span>, -<span style="color: #0000c0;">0.6598876</span>, -<span style="color: #0000c0;">0.64359</span><span style="color: #a8007f;">}</span>;
+    init<span style="color: #a8007f;">(</span>v1, v2, N<span style="color: #a8007f;">)</span>;
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; dotproduct<span style="color: #a8007f;">(</span>v1, v2, N<span style="color: #a8007f;">)</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl;
+    print<span style="color: #a8007f;">(</span>v1, <span style="color: #0000c0;">10</span><span style="color: #a8007f;">)</span>;
+    print<span style="color: #a8007f;">(</span>v2, <span style="color: #0000c0;">11</span><span style="color: #a8007f;">)</span>;
+
+    <span style="color: #5317ac;">return</span> <span style="color: #0000c0;">0</span>;
+<span style="color: #000000;">}</span>
+
+<span style="color: #005a5f;">double</span> <span style="color: #721045;">dotproduct</span><span style="color: #000000;">(</span><span style="color: #5317ac;">const</span> <span style="color: #005a5f;">double</span> <span style="color: #00538b;">a1</span><span style="color: #a8007f;">[]</span>, <span style="color: #5317ac;">const</span> <span style="color: #005a5f;">double</span> <span style="color: #00538b;">a2</span><span style="color: #a8007f;">[]</span>, <span style="color: #005a5f;">int</span> <span style="color: #00538b;">size</span><span style="color: #000000;">)</span>
+<span style="color: #000000;">{</span>
+    <span style="color: #005a5f;">double</span> <span style="color: #00538b;">dot</span> = <span style="color: #0000c0;">0</span>;
+    <span style="color: #5317ac;">for</span> <span style="color: #a8007f;">(</span><span style="color: #005a5f;">int</span> <span style="color: #00538b;">ii</span> = <span style="color: #0000c0;">0</span>; ii &lt; size; ii++<span style="color: #a8007f;">)</span> <span style="color: #a8007f;">{</span>
+        dot += a1<span style="color: #005f88;">[</span>ii<span style="color: #005f88;">]</span>*a2<span style="color: #005f88;">[</span>ii<span style="color: #005f88;">]</span>;
+    <span style="color: #a8007f;">}</span>
+    <span style="color: #5317ac;">return</span> dot;
+<span style="color: #000000;">}</span>
+<span style="color: #005a5f;">void</span> <span style="color: #721045;">init</span><span style="color: #000000;">(</span><span style="color: #005a5f;">double</span> <span style="color: #00538b;">a1</span><span style="color: #a8007f;">[]</span>, <span style="color: #005a5f;">double</span> <span style="color: #00538b;">a2</span><span style="color: #a8007f;">[]</span>, <span style="color: #005a5f;">int</span> <span style="color: #00538b;">size</span><span style="color: #000000;">)</span>
+<span style="color: #000000;">{</span>
+    <span style="color: #5317ac;">for</span> <span style="color: #a8007f;">(</span><span style="color: #005a5f;">int</span> <span style="color: #00538b;">ii</span> = <span style="color: #0000c0;">0</span>; ii &lt; size; ii++<span style="color: #a8007f;">)</span> <span style="color: #a8007f;">{</span>
+        a1<span style="color: #005f88;">[</span>ii<span style="color: #005f88;">]</span> = <span style="color: #0000c0;">2</span>*ii;
+        a2<span style="color: #005f88;">[</span>ii<span style="color: #005f88;">]</span> = <span style="color: #0000c0;">1.0</span>/<span style="color: #005f88;">(</span><span style="color: #0000c0;">2</span>*ii*ii + <span style="color: #0000c0;">1</span><span style="color: #005f88;">)</span>;
+    <span style="color: #a8007f;">}</span>
+<span style="color: #000000;">}</span>
+
+<span style="color: #005a5f;">void</span> <span style="color: #721045;">print</span><span style="color: #000000;">(</span><span style="color: #5317ac;">const</span> <span style="color: #005a5f;">double</span> <span style="color: #00538b;">array</span><span style="color: #a8007f;">[]</span>, <span style="color: #005a5f;">int</span> <span style="color: #00538b;">size</span><span style="color: #000000;">)</span>
+<span style="color: #000000;">{</span>
+    <span style="color: #5317ac;">for</span> <span style="color: #a8007f;">(</span><span style="color: #005a5f;">int</span> <span style="color: #00538b;">ii</span> = <span style="color: #0000c0;">0</span>; ii &lt; size; ii++<span style="color: #a8007f;">)</span> <span style="color: #a8007f;">{</span>
+        <span style="color: #0000c0;">std</span>::cout &lt;&lt; array<span style="color: #005f88;">[</span>ii<span style="color: #005f88;">]</span> &lt;&lt; <span style="color: #2544bb;">" "</span> ;
+    <span style="color: #a8007f;">}</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; <span style="color: #2544bb;">"\n"</span>;
+<span style="color: #000000;">}</span>
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5cb01d0" class="outline-2">
+<h2 id="org5cb01d0"><span class="section-number-2">4</span> <span class="todo TODO">TODO</span> Talk about dynamic memory <code>[/]</code></h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Goal: Learn how to use <code>new</code> and <code>delete</code>
+</p>
+
+<ul class="org-ul">
+<li class="off"><code>[&#xa0;]</code> <p>
+Create a dynamic array with size read from the command line args. Check
+memory comsumption
+</p>
+
+<div class="org-src-container">
+<pre class="src src-cpp"><span style="color: #a0132f;">#include</span> <span style="color: #000000;">&lt;</span><span style="color: #2544bb;">iostream</span><span style="color: #000000;">&gt;</span>
+
+<span style="color: #005a5f;">int</span> <span style="color: #721045;">main</span><span style="color: #000000;">(</span><span style="color: #005a5f;">int</span> <span style="color: #00538b;">argc</span>, <span style="color: #005a5f;">char</span> *<span style="color: #00538b;">argv</span><span style="color: #a8007f;">[]</span><span style="color: #000000;">)</span> <span style="color: #000000;">{</span>
+    <span style="color: #005a5f;">int</span> <span style="color: #00538b;">N</span> = <span style="color: #0000c0;">std</span>::atoi<span style="color: #a8007f;">(</span>argv<span style="color: #005f88;">[</span><span style="color: #0000c0;">1</span><span style="color: #005f88;">]</span><span style="color: #a8007f;">)</span>;
+    <span style="color: #005a5f;">double</span> * <span style="color: #00538b;">data</span> = <span style="color: #0000c0;">nullptr</span>;
+    data = <span style="color: #5317ac;">new</span> <span style="color: #005a5f;">double</span> <span style="color: #a8007f;">[</span>N<span style="color: #a8007f;">]</span>; <span style="color: #505050;">// </span><span style="color: #505050;">ask for memory</span>
+    <span style="color: #5317ac;">for</span><span style="color: #a8007f;">(</span><span style="color: #005a5f;">int</span> <span style="color: #00538b;">ii</span> = <span style="color: #0000c0;">0</span>; ii &lt; N; ++ii<span style="color: #a8007f;">)</span> <span style="color: #a8007f;">{</span>
+        data<span style="color: #005f88;">[</span>ii<span style="color: #005f88;">]</span> = <span style="color: #0000c0;">2</span>*ii/<span style="color: #005f88;">(</span><span style="color: #0000c0;">2</span>*ii + <span style="color: #0000c0;">1.0</span><span style="color: #005f88;">)</span>;
+    <span style="color: #a8007f;">}</span>
+    <span style="color: #0000c0;">std</span>::cout &lt;&lt; data<span style="color: #a8007f;">[</span>N/<span style="color: #0000c0;">2</span><span style="color: #a8007f;">]</span> &lt;&lt; <span style="color: #0000c0;">std</span>::endl;
+    
+    <span style="color: #5317ac;">delete</span> <span style="color: #a8007f;">[]</span> data; <span style="color: #505050;">// </span><span style="color: #505050;">return memory</span>
+    
+    <span style="color: #5317ac;">return</span> <span style="color: #0000c0;">0</span>;
+<span style="color: #000000;">}</span>
+</pre>
+</div>
+
+<p>
+Python/c++ tutor visualization
+</p>
+<iframe width="800" height="500" frameborder="0" src="https://pythontutor.com/iframe-embed.html#code=%23include%20%3Ciostream%3E%0A%0Aint%20main%28int%20argc,%20char%20*argv%5B%5D%29%20%7B%0A%20%20%20%20int%20N%20%3D%20std%3A%3Aatoi%28argv%5B1%5D%29%3B%0A%20%20%20%20double%20*%20data%20%3D%20nullptr%3B%0A%20%20%20%20data%20%3D%20new%20double%20%5BN%5D%3B%20//%20ask%20for%20memory%0A%20%20%20%20for%28int%20ii%20%3D%200%3B%20ii%20%3C%20N%3B%20%2B%2Bii%29%20%7B%0A%20%20%20%20%20%20%20%20data%5Bii%5D%20%3D%202*ii/%282*ii%20%2B%201.0%29%3B%0A%20%20%20%20%7D%0A%20%20%20%20std%3A%3Acout%20%3C%3C%20data%5BN/2%5D%20%3C%3C%20std%3A%3Aendl%3B%0A%20%20%20%20%0A%20%20%20%20delete%20%5B%5D%20data%3B%20//%20return%20memory%0A%20%20%20%20%0A%20%20%20%20return%200%3B%0A%7D&codeDivHeight=400&codeDivWidth=350&cumulative=false&curInstr=0&heapPrimitives=nevernest&origin=opt-frontend.js&py=cpp_g%2B%2B9.3.0&rawInputLstJSON=%5B%5D&textReferences=false"> </iframe></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: William Oquendo</p>
+<p class="date">Created: 2021-11-19 Fri 09:00</p>
+</div>
+</body>
+</html>
